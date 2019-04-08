@@ -1,0 +1,15 @@
+.wp-block-custom-team-block {
+    background: #ccc;
+    padding: 20px;
+    text-align: center;
+}
+
+.wp-block-custom-team-block .row {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.wp-block-custom-team-block .row .box {
+    padding: 10px;
+    width: 25%;
+}
