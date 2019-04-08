@@ -78,12 +78,12 @@ function custom_team_block_init() {
 add_action( 'init', 'custom_team_block_init' );
 
 function custom_team_block_render_block_team( $attributes, $content ) {
-	$the_query = new WP_Query( array(
+	$team_posts = get_posts( array(
 		'post_type' => 'team',
 		'posts_per_page' => -1,
 	) );
 	ob_start();
-	if ( $the_query->have_posts() ) : ?>
+	if ( $team_posts ) : ?>
 		<div class="wp-block-custom-team-block">
 			<div class="container">
 				<?php if ( ! empty( $attributes['block_title'] ) ) : ?>
@@ -93,13 +93,13 @@ function custom_team_block_render_block_team( $attributes, $content ) {
 					<?php echo wpautop( $attributes['block_description'] ); ?>
 				<?php endif; ?>
 				<div class="row">
-					<?php while ( $the_query->have_posts() ) : $the_query->the_post(); ?>
+					<?php foreach ( $team_posts as $p ) : ?>
 						<div class="box">
-							<?php the_post_thumbnail( 'thumbnail' ); ?>
-							<?php the_title( '<h3>', '</h3>' ); ?>
-							<?php the_content(); ?>
+							<?php echo get_the_post_thumbnail( $p->ID, 'thumbnail' ); ?>
+							<h3><?php echo get_the_title( $p->ID ); ?></h3>
+							<?php echo wpautop( $p->post_content ); ?>
 						</div>
-					<?php endwhile; wp_reset_postdata(); ?>
+					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>
