@@ -97,6 +97,9 @@ function custom_team_block_render_block_team( $attributes, $content ) {
 						<div class="box">
 							<?php echo get_the_post_thumbnail( $p->ID, 'thumbnail' ); ?>
 							<h3><?php echo get_the_title( $p->ID ); ?></h3>
+							<?php if ( $team_member_postition = get_post_meta( $p->ID, 'team_member_postition', true ) ) : ?>
+								<h4><?php echo esc_html( $team_member_postition ); ?></h4>
+							<?php endif; ?>
 							<?php echo wpautop( $p->post_content ); ?>
 						</div>
 					<?php endforeach; ?>
@@ -108,3 +111,64 @@ function custom_team_block_render_block_team( $attributes, $content ) {
 	ob_end_clean();
 	return $data;
 }
+
+function custom_team_block_add_team_metaboxes() {
+	add_meta_box(
+		'team_member_postition',
+		'Team member postition',
+		'custom_team_block_team_member_metaboxes_html',
+		'team',
+		'side',
+		'low'
+	);
+}
+
+add_action( 'add_meta_boxes', 'custom_team_block_add_team_metaboxes' );
+
+function custom_team_block_team_member_metaboxes_html() {
+	global $post;
+	// Nonce field to validate form request came from current site
+	wp_nonce_field( basename( __FILE__ ), 'custom_team_block_metaboxes' );
+	// Get the location data if it's already been entered
+	$team_member_postition = get_post_meta( $post->ID, 'team_member_postition', true );
+	// Output the field
+	echo '<input type="text" name="team_member_postition" value="' . esc_attr( $team_member_postition )  . '" class="widefat">';
+}
+
+/**
+ * Save the metabox data
+ */
+function custom_team_block_team_member_save_meta( $post_id, $post ) {
+	// Return if the user doesn't have edit permissions.
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return $post_id;
+	}
+	// Verify this came from the our screen and with proper authorization,
+	// because save_post can be triggered at other times.
+	if ( ! isset( $_POST['team_member_postition'] ) || ! wp_verify_nonce( $_POST['custom_team_block_metaboxes'], basename(__FILE__) ) ) {
+		return $post_id;
+	}
+	// Now that we're authenticated, time to save the data.
+	// This sanitizes the data from the field and saves it into an array $events_meta.
+	$team_member_meta['team_member_postition'] = sanitize_text_field( $_POST['team_member_postition'] );
+	// Cycle through the $team_member_meta array.
+	// Note, in this example we just have one item, but this is helpful if you have multiple.
+	foreach ( $team_member_meta as $key => $value ) :
+		// Don't store custom data twice
+		if ( 'revision' === $post->post_type ) {
+			return;
+		}
+		if ( get_post_meta( $post_id, $key, false ) ) {
+			// If the custom field already has a value, update it.
+			update_post_meta( $post_id, $key, $value );
+		} else {
+			// If the custom field doesn't have a value, add it.
+			add_post_meta( $post_id, $key, $value);
+		}
+		if ( ! $value ) {
+			// Delete the meta key if there's no value
+			delete_post_meta( $post_id, $key );
+		}
+	endforeach;
+}
+add_action( 'save_post', 'custom_team_block_team_member_save_meta', 1, 2 );
