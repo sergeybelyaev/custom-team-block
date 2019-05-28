@@ -149,7 +149,7 @@ function custom_team_block_team_member_save_meta( $post_id, $post ) {
 		return $post_id;
 	}
 	// Now that we're authenticated, time to save the data.
-	// This sanitizes the data from the field and saves it into an array $events_meta.
+	// This sanitizes the data from the field and saves it into an array $team_member_meta.
 	$team_member_meta['team_member_postition'] = sanitize_text_field( $_POST['team_member_postition'] );
 	// Cycle through the $team_member_meta array.
 	// Note, in this example we just have one item, but this is helpful if you have multiple.
