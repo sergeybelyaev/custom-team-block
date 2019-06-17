@@ -163,12 +163,22 @@ function custom_team_block_team_member_save_meta( $post_id, $post ) {
 	if ( ! current_user_can( 'edit_post', $post_id ) ) {
 		return $post_id;
 	}
+<<<<<<< HEAD
+=======
+	// Verify this came from the our screen and with proper authorization,
+	// because save_post can be triggered at other times.
+>>>>>>> 27e31c67535071584cdfe1f1f315d4b70cc83492
 	if ( ! ( isset( $_POST['team_member_postition'] ) || isset( $_POST['team_member_order_number'] ) ) || ! wp_verify_nonce( $_POST['custom_team_block_metaboxes'], basename(__FILE__) ) ) {
 		return $post_id;
 	}
 	$team_member_meta['team_member_postition'] = sanitize_text_field( $_POST['team_member_postition'] );
 	$team_member_meta['team_member_order_number'] = intval( $_POST['team_member_order_number'] );
 	$team_member_meta['team_member_linkedin'] = esc_url_raw( $_POST['team_member_linkedin'] );
+<<<<<<< HEAD
+=======
+	// Cycle through the $team_member_meta array.
+	// Note, in this example we just have one item, but this is helpful if you have multiple.
+>>>>>>> 27e31c67535071584cdfe1f1f315d4b70cc83492
 	foreach ( $team_member_meta as $key => $value ) :
 		if ( 'revision' === $post->post_type ) {
 			return;
