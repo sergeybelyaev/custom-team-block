@@ -6,10 +6,18 @@
 
 .wp-block-custom-team-block .row {
     display: flex;
-    flex-flow: row wrap;
+    flex-wrap: wrap;
+    justify-content:center;
 }
 
 .wp-block-custom-team-block .row .box {
+    max-width: 100%;
+    min-width: 25%;
+    flex-basis: 0;
+    flex-grow: 1;
     padding: 10px;
-    width: 25%;
+}
+
+.wp-block-custom-team-block .row .box:nth-child(4) ~ .box {
+    max-width:25%;
 }
